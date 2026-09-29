@@ -17,6 +17,20 @@ Open a CSV, Parquet, Arrow IPC file, or Cellium workbook and work in a responsiv
 
 Cellium is a desktop spreadsheet UI over a local analytical database. It is designed for the moment when a normal spreadsheet becomes uncomfortable: large CSVs, wide tables, quick inspection, lightweight edits, and repeatable local work.
 
+## The Big Bet
+
+Excel owns the familiar spreadsheet. Cellium is being built for the files that make familiar spreadsheets feel heavy.
+
+The ambition is a **4,000x-feeling leap in responsiveness** when opening, scrolling, and exploring large tables. That number is a product target, not a published benchmark claim yet; we will earn it with reproducible comparisons instead of inventing a chart for the README.
+
+The technical bet is simple:
+
+- The visible grid and application chrome are rendered through a retained `wgpu` pipeline, not a browser DOM and not one heavyweight widget per cell.
+- DuckDB reads and filters the data; Arrow batches cross the data/render boundary; Tokio keeps blocking work away from the event loop.
+- Only the visible window plus a bounded prefetch margin is held for rendering. A 900 MB CSV should not require a 900 MB UI.
+
+Cellium is not trying to be another spreadsheet clone. It is trying to become the one calm, fast home for CSVs, Parquet files, and spreadsheet workbooks: open the file, understand the shape, make the edit, save the work, and keep moving.
+
 ## What Works
 
 | Area | Current capability |
@@ -119,13 +133,80 @@ crates/
 ├── cellium-core      workbook model, IDs, commands, and history
 ├── cellium-data      DuckDB import, queries, Arrow windows, and persistence
 ├── cellium-formula   formula AST, parser, evaluator, and dependencies
-├── cellium-render     retained wgpu renderer and text pipeline
-├── cellium-search     fuzzy and indexed search building blocks
+├── cellium-render    retained wgpu renderer and text pipeline
+├── cellium-search    fuzzy and indexed search building blocks
 ├── cellium-store      local workbook-library repository
 └── cellium-ui         input state, grid math, and reusable UI components
 ```
 
 The renderer is retained-mode and viewport-driven: it does not create a UI object for every cell, query from a draw call, or load an entire table into RAM just to display it.
+
+## Build Checklist
+
+### Foundation
+
+- [x] Single `cellium` desktop binary
+- [x] Clean Cargo workspace with separated app, UI, renderer, data, and domain crates
+- [x] Rust + `winit` + raw `wgpu` application loop
+- [x] Custom dark UI with reusable component modules
+- [x] Monospace-first typography and GPU text rendering
+
+### Big-file performance
+
+- [x] CSV, Parquet, and Arrow IPC import paths
+- [x] Lazy first paint for large files
+- [x] Background materialization with Tokio worker orchestration
+- [x] Visible row and column virtualization
+- [x] Prefetch windows to keep scrolling populated
+- [x] Stable row IDs for safe edits after sorting and filtering
+- [x] Touchpad pixel scrolling, kinetic panning, and table-only zoom
+- [ ] Reproducible performance suite against Excel, LibreOffice, and browser spreadsheets
+- [ ] Publish memory and frame-time numbers for representative 100 MB, 900 MB, and multi-million-row files
+
+### Spreadsheet behavior
+
+- [x] Cell, row, column, range, and sheet selection
+- [x] Mouse text selection, double-click word selection, and triple-click select-all
+- [x] Keyboard editing, clipboard actions, caret movement, and text undo/redo
+- [x] Animated selection, caret, row resize, and column resize feedback
+- [x] Durable edits inside `.cellium` workbooks
+- [ ] Workbook-level undo/redo across every mutation
+- [ ] Formula cells and computed columns connected to the live grid
+- [ ] Multi-cell paste, fill handles, and richer spreadsheet shortcuts
+
+### Table workflows
+
+- [x] Quick sort and additive multi-column sort
+- [x] Filter-to-selected-value
+- [x] Exact filtered row counts
+- [x] Persisted default table views
+- [ ] Rich typed filter builder with removable filter chips
+- [ ] Named view save, duplicate, rename, reset, and delete
+- [ ] Column hide, reorder, freeze, and schema actions
+
+## Roadmap
+
+The roadmap follows one rule: every layer must stay fast enough that users can forget the engine is there.
+
+### 1. Make Large Files Feel Instant
+
+Finish the performance story before adding spectacle: benchmark the visible-window pipeline, tune prefetching from measured scroll velocity, eliminate blank-frame transitions, and keep RAM bounded while users throw the viewport across a dataset.
+
+### 2. Reach Spreadsheet Parity
+
+Bring the everyday muscle memory people already have: workbook-level undo/redo, multi-cell paste, fill and clear operations, formulas, computed columns, richer keyboard navigation, and reliable crash-safe saving.
+
+### 3. Make Tables A First-Class Object
+
+Add a real filter builder, named views, column operations, schema inspection, export controls, and table-aware context menus. Every operation should remain typed and safe; the UI should never make users write SQL to do normal table work.
+
+### 4. Earn Trust At Scale
+
+Add cancellation and progress for long imports, recovery after interrupted writes, file-change detection, migrations, diagnostics that explain what happened in plain language, and a benchmark dashboard we can publish with confidence.
+
+### 5. Become The Table Workspace
+
+Only after the local core is excellent: connectors, collaboration, charts, pivots, scheduled refreshes, and an extension surface. The goal is not to bolt every feature onto a spreadsheet; it is to make one focused table workspace that scales from a blank sheet to serious datasets.
 
 ## Workbook Files
 
