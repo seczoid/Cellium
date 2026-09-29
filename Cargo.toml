@@ -1,0 +1,68 @@
+[workspace]
+members = [
+    "crates/cellium-app",
+    "crates/cellium-core",
+    "crates/cellium-data",
+    "crates/cellium-formula",
+    "crates/cellium-render",
+    "crates/cellium-search",
+    "crates/cellium-store",
+    "crates/cellium-ui",
+]
+default-members = ["crates/cellium-app"]
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+
+[workspace.dependencies]
+anyhow = "1.0.100"
+arboard = "3.6.1"
+arrow = "57.0.0"
+bytemuck = { version = "1.25.0", features = ["derive"] }
+cosmic-text = "0.19.0"
+duckdb = "1.10504.0"
+glyphon = "0.11.0"
+libsql = "0.9.27"
+memmap2 = "0.9.11"
+nucleo = "0.5.0"
+parquet = "57.0.0"
+pollster = "0.4.0"
+rfd = "0.17.2"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.150"
+taffy = "0.11.0"
+tantivy = "0.25.0"
+thiserror = "2.0.18"
+tokio = { version = "1.48.0", features = ["rt-multi-thread", "macros", "fs", "sync"] }
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
+unicode-segmentation = "1.12.0"
+wgpu = "29.0.3"
+winit = "0.30.13"
+
+cellium-core = { path = "crates/cellium-core" }
+cellium-data = { path = "crates/cellium-data" }
+cellium-formula = { path = "crates/cellium-formula" }
+cellium-render = { path = "crates/cellium-render" }
+cellium-search = { path = "crates/cellium-search" }
+cellium-store = { path = "crates/cellium-store" }
+cellium-ui = { path = "crates/cellium-ui" }
+
+[workspace.lints.rust]
+future-incompatible = "warn"
+nonstandard-style = { level = "deny", priority = 1 }
+rust-2018-idioms = { level = "warn", priority = 1 }
+unused = { level = "warn", priority = -1 }
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = 10 }
+redundant-clone = { level = "deny", priority = 9 }
+clone-on-copy = { level = "deny", priority = 9 }
+needless-borrow = { level = "deny", priority = 8 }
+manual-ok-or = { level = "deny", priority = 8 }
+map-unwrap-or = { level = "deny", priority = 8 }
+large-enum-variant = { level = "warn", priority = 5 }
+needless-collect = { level = "warn", priority = 5 }

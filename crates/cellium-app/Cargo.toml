@@ -1,0 +1,24 @@
+[package]
+name = "cellium"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+default-run = "cellium"
+
+[dependencies]
+anyhow.workspace = true
+arboard.workspace = true
+cellium-core.workspace = true
+cellium-data.workspace = true
+cellium-render.workspace = true
+cellium-store.workspace = true
+cellium-ui.workspace = true
+pollster.workspace = true
+rfd.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+winit.workspace = true
+
+[lints]
+workspace = true

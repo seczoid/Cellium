@@ -1,0 +1,18 @@
+[package]
+name = "cellium-store"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+cellium-core.workspace = true
+libsql.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+tokio.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,16 @@
+[package]
+name = "cellium-render"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+bytemuck.workspace = true
+cellium-ui.workspace = true
+glyphon.workspace = true
+thiserror.workspace = true
+wgpu.workspace = true
+winit.workspace = true
+
+[lints]
+workspace = true
